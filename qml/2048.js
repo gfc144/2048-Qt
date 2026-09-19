@@ -173,12 +173,12 @@ function moveKey(event) {
             }
             updateScore(oldScore);
             if (checkTargetFlag && maxTileValue() >= targetLevel) {
-                winMessage.open();
+                dialogManager.showWinDialog();
             }
         }
     } else {
         if (isDead()) {
-            deadMessage.open();
+            dialogManager.showGameOverDialog();
         }
     }
 }

@@ -1,185 +1,27 @@
-import QtQuick 2.2
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
-import QtQuick.Dialogs 1.1
-import QtQuick.Window 2.1
+import QtQuick
+import QtQuick.Controls
 import "2048.js" as MyScript
 
-ApplicationWindow {
+Rectangle {
     id: mainWindow
-    visible: true
     width: 550
     height: 740
-    title: qsTr("2048 Game");
-//    flags: Qt.Window | Qt.WindowTitleHint  | Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint | Qt.CustomizeWindowHint
-
-    x: (Screen.width - width) / 2
-    y: (Screen.height - height) / 2
-
-    ExclusiveGroup { id: labelSettingsGroup }
-    ExclusiveGroup { id: languageSettingsGroup }
-
-    menuBar: MenuBar {
-        Menu {
-            title: qsTr("File")
-            MenuItem {
-                text: qsTr("New Game")
-                shortcut: "Ctrl+N"
-                onTriggered: MyScript.startupFunction();
-            }
-            MenuItem {
-                text: qsTr("Exit")
-                shortcut: "Ctrl+Q"
-                onTriggered: MyScript.cleanUpAndQuit();
-            }
-        }
-
-        Menu {
-            title: qsTr("Settings")
-            Menu {
-                title: qsTr("Labeling")
-                MenuItem {
-                    text: qsTr("2048")
-                    checkable: true
-                    exclusiveGroup: labelSettingsGroup
-                    checked: MyScript.label === MyScript.labelOptions[0] ? true : false
-                    onTriggered: {
-                        if (MyScript.label !== MyScript.labelOptions[0]) {
-                            MyScript.label = MyScript.labelOptions[0];
-                            MyScript.startupFunction();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: qsTr("Degree")
-                    checkable: true
-                    exclusiveGroup: labelSettingsGroup
-                    checked: MyScript.label === MyScript.labelOptions[1] ? true : false
-                    onTriggered: {
-                        if (MyScript.label !== MyScript.labelOptions[1]) {
-                            MyScript.label = MyScript.labelOptions[1];
-                            MyScript.startupFunction();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: qsTr("Military Rank")
-                    checkable: true
-                    exclusiveGroup: labelSettingsGroup
-                    checked: MyScript.label === MyScript.labelOptions[2] ? true : false
-                    onTriggered: {
-                        if (MyScript.label !== MyScript.labelOptions[2]) {
-                            MyScript.label = MyScript.labelOptions[2];
-                            MyScript.startupFunction();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: qsTr("PRC")
-                    checkable: true
-                    exclusiveGroup: labelSettingsGroup
-                    checked: MyScript.label === MyScript.labelOptions[3] ? true : false
-                    onTriggered: {
-                        if (MyScript.label !== MyScript.labelOptions[3]) {
-                            MyScript.label = MyScript.labelOptions[3];
-                            MyScript.startupFunction();
-                        }
-                    }
-                }
-            }
-            Menu {
-                title: qsTr("Language")
-                MenuItem {
-                    text: "English"
-                    checkable: true
-                    exclusiveGroup: languageSettingsGroup
-                    checked: settings.value("language") === "en_US" ? true : false
-                    onTriggered: {
-                        if (settings.value("language") !== "en_US") {
-                            settings.setValue("language", "en_US");
-                            changeLanguageDialog.open();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: "Français"
-                    checkable: true
-                    exclusiveGroup: languageSettingsGroup
-                    checked: settings.value("language") === "fr_FR" ? true : false
-                    onTriggered: {
-                        if (settings.value("language") !== "fr_FR") {
-                            settings.setValue("language", "fr_FR");
-                            changeLanguageDialog.open();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: "简体中文"
-                    checkable: true
-                    exclusiveGroup: languageSettingsGroup
-                    checked: settings.value("language") === "zh_CN" ? true : false
-                    onTriggered: {
-                        if (settings.value("language") !== "zh_CN") {
-                            settings.setValue("language", "zh_CN");
-                            changeLanguageDialog.open();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: "Polski"
-                    checkable: true
-                    exclusiveGroup: languageSettingsGroup
-                    checked: settings.value("language") === "pl_PL" ? true : false
-                    onTriggered: {
-                        if (settings.value("language") !== "pl_PL") {
-                            settings.setValue("language", "pl_PL");
-                            changeLanguageDialog.open();
-                        }
-                    }
-                }
-
-                MenuItem {
-                    text: "Русский"
-                    checkable: true
-                    exclusiveGroup: languageSettingsGroup
-                    checked: settings.value("language") === "ru_RU" ? true : false
-                    onTriggered: {
-                        if (settings.value("language") !== "ru_RU") {
-                            settings.setValue("language", "ru_RU");
-                            changeLanguageDialog.open();
-                        }
-                    }
-                }
-                MenuItem {
-                    text: "German"
-                    checkable: true
-                    exclusiveGroup: languageSettingsGroup
-                    checked: settings.value("language") == "de_DE" ?  true : false
-                    onTriggered: {
-                        if (settings.value("language") != "de_DE") {
-                            settings.setValue("language", "de_DE");
-                            changeLanguageDialog.open();
-                        }
-                    }
-                }
-            }
-        }
-
-        Menu {
-            id: helpMenu
-            title: qsTr("Help")
-            MenuItem {
-                text: qsTr("About")
-                onTriggered: aboutDialog.open();
-            }
-            MenuItem {
-                text: qsTr("About Qt")
-                onTriggered: myClass.aboutQt();
-            }
+    
+    property string currentLabel: MyScript.label
+    function startNewGame() { MyScript.startupFunction(); }
+    function setLabel(name) {
+        if (MyScript.label !== name) {
+            MyScript.label = name;
+            MyScript.startupFunction();
         }
     }
 
-
+    Connections {
+        target: dialogManager
+        function onRequestNewGame() { MyScript.startupFunction(); }
+        function onContinuePlaying() { MyScript.checkTargetFlag = false; }
+        function onQuitApp() { MyScript.cleanUpAndQuit(); }
+    }
     Item {
         id: helper
         focus: false
@@ -304,19 +146,18 @@ ApplicationWindow {
             y: 90
             anchors.right: parent.right
 
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: helper.myColors.bgbutton
-                    radius: 3
-                    Text{
-                        anchors.centerIn: parent
-                        text: qsTr("New Game")
-                        color: helper.myColors.fgbutton
-                        font.family: localFont.name
-                        font.pixelSize: 18
-                        font.bold: true
-                    }
-                }
+            background: Rectangle {
+                color: helper.myColors.bgbutton
+                radius: 3
+            }
+            contentItem: Text {
+                text: qsTr("New Game")
+                color: helper.myColors.fgbutton
+                font.family: localFont.name
+                font.pixelSize: 18
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
             onClicked: MyScript.startupFunction()
         }
@@ -343,47 +184,6 @@ ApplicationWindow {
                         color: helper.myColors.bggray
                     }
                 }
-            }
-        }
-
-        MessageDialog {
-            id: changeLanguageDialog
-            title: qsTr("Language Setting Hint")
-            text: qsTr("Please restart the program to make the language setting take effect.")
-            standardButtons: StandardButton.Ok
-        }
-
-        MessageDialog {
-            id: aboutDialog
-            title: qsTr("About 2048-Qt")
-            text: qsTr("<p style='font-weight: bold; font-size: 24px'>2048-Qt</p><p>Version " + settings.getVersion() + "</p><p>2015 Qiaoyong Zhong &lt;solary.sh@gmail.com&gt;</p>")
-            standardButtons: StandardButton.Ok
-        }
-
-        MessageDialog {
-            id: deadMessage
-            title: qsTr("Game Over")
-            text: qsTr("Game Over!")
-            standardButtons: StandardButton.Retry | StandardButton.Abort
-            onAccepted: {
-                MyScript.startupFunction();
-            }
-            onRejected: MyScript.cleanUpAndQuit();
-        }
-
-        MessageDialog {
-            id: winMessage
-            title: qsTr("You Win")
-            text: qsTr("You win! Continue playing?")
-            standardButtons: StandardButton.Yes | StandardButton.No
-            onYes: {
-                MyScript.checkTargetFlag = false;
-                close()
-            }
-            onNo: MyScript.startupFunction()
-            onRejected: {
-                MyScript.checkTargetFlag = false;
-                close()
             }
         }
 
