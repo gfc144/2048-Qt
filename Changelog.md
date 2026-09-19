@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-09-19 0.2.0
+* move to Qt6
+
 ## 2015-09-19 0.1.6
 * added French, German, Polish translation
 * put config file in `~/.config/2048-qt/` instead of `~/.config/xiaoyong/`
